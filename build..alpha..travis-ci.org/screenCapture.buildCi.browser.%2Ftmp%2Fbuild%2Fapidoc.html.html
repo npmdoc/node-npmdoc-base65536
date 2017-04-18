@@ -1,0 +1,181 @@
+<html><head></head><body><div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a href="https://github.com/ferno/base65536">base65536 (v1.0.4)</a>
+</h1>
+<h4>Unicode's answer to Base64</h4>
+<div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.base65536">module base65536</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.base65536.decode">
+            function <span class="apidocSignatureSpan">base65536.</span>decode
+            <span class="apidocSignatureSpan">(str)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.base65536.encode">
+            function <span class="apidocSignatureSpan">base65536.</span>encode
+            <span class="apidocSignatureSpan">(buf)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.base65536" id="apidoc.module.base65536">module base65536</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.base65536.decode" id="apidoc.element.base65536.decode">
+        function <span class="apidocSignatureSpan">base65536.</span>decode
+        <span class="apidocSignatureSpan">(str)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">decode = function (str) {
+		var bufs = [];
+		var done = false;
+		for(var i = 0; i &lt; str.length; i++) {
+			if(done) {
+				throw new Error("Base65536 sequence continued after final byte");
+			}
+			var codePoint = str.codePointAt(i);
+			var b1 = codePoint &amp; ((1 &lt;&lt; 8) - 1);
+			var b2 = get_b2[codePoint - b1];
+			if(b2 === undefined) {
+				throw new Error("Not a valid Base65536 code point: " + String(codePoint));
+			}
+			if(b2 === NO_BYTE) {
+				bufs.push(new Buffer([b1]));
+				done = true;
+			} else {
+				bufs.push(new Buffer([b1, b2]));
+			}
+			if(codePoint &gt;= (1 &lt;&lt; 16)) {
+				i++;
+			}
+		}
+		return Buffer.concat(bufs);
+	}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+var base65536 = require("base65536");
+
+var buf = new Buffer("hello world"); // 11 bytes
+
+var str = base65536.encode(buf);
+console.log(str); // 6 code points, "é©¨ê¬å•¯ð’·ê²á•¤"
+
+var buf2 = base65536.<span class="apidocCodeKeywordSpan">decode</span>(str);
+console.log(buf.equals(buf2)); // true
+```
+
+## API
+
+### base65536.encode(buf)
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.base65536.encode" id="apidoc.element.base65536.encode">
+        function <span class="apidocSignatureSpan">base65536.</span>encode
+        <span class="apidocSignatureSpan">(buf)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">encode = function (buf) {
+		var strs = [];
+		for(var i = 0; i &lt; buf.length; i += 2) {
+			var b1 = buf[i];
+			var b2 = i + 1 &lt; buf.length ? buf[i + 1] : NO_BYTE;
+			var codePoint = get_block_start[b2] + b1;
+			var str = String.fromCodePoint(codePoint);
+			strs.push(str);
+		}
+		return strs.join("");
+	}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+## Usage
+
+```js
+var base65536 = require("base65536");
+
+var buf = new Buffer("hello world"); // 11 bytes
+
+var str = base65536.<span class="apidocCodeKeywordSpan">encode</span>(buf);
+console.log(str); // 6 code points, "é©¨ê¬å•¯ð’·ê²á•¤"
+
+var buf2 = base65536.decode(str);
+console.log(buf.equals(buf2)); // true
+```
+
+## API
+...</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
+</body></html>

@@ -1,6 +1,6 @@
 # npmdoc-base65536
 
-#### api documentation for  [base65536 (v1.0.4)](https://github.com/ferno/base65536)  [![npm package](https://img.shields.io/npm/v/npmdoc-base65536.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-base65536) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-base65536.svg)](https://travis-ci.org/npmdoc/node-npmdoc-base65536)
+#### basic api documentation for  [base65536 (v1.0.65536)](https://github.com/ferno/base65536)  [![npm package](https://img.shields.io/npm/v/npmdoc-base65536.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-base65536) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-base65536.svg)](https://travis-ci.org/npmdoc/node-npmdoc-base65536)
 
 #### Unicode's answer to Base64
 
@@ -27,20 +27,17 @@
     "bugs": {
         "url": "https://github.com/ferno/base65536/issues"
     },
-    "dependencies": {
-        "string.fromcodepoint": "",
-        "string.prototype.codepointat": ""
-    },
+    "dependencies": {},
     "description": "Unicode's answer to Base64",
     "devDependencies": {
         "glob": "^7.1.1"
     },
     "directories": {},
     "dist": {
-        "shasum": "e9e27dd074b6a5b3847682990914f4a692d70df5",
-        "tarball": "https://registry.npmjs.org/base65536/-/base65536-1.0.4.tgz"
+        "shasum": "85a76d55f103db7c3b7deee33eb9a4dfd66c2487",
+        "tarball": "https://registry.npmjs.org/base65536/-/base65536-1.0.65536.tgz"
     },
-    "gitHead": "2252b92fbdfd5ed3d81b9bfe117c5d4e654a11e8",
+    "gitHead": "2d76cf1f0a69469812423f28dd0486f3760c279a",
     "homepage": "https://github.com/ferno/base65536",
     "keywords": [
         "base64",
@@ -66,7 +63,8 @@
     "scripts": {
         "test": "node test/test.js"
     },
-    "version": "1.0.4"
+    "version": "1.0.65536",
+    "bin": {}
 }
 ```
 

@@ -51,7 +51,7 @@
 
         href="https://github.com/ferno/base65536"
 
-    >base65536 (v1.0.4)</a>
+    >base65536 (v1.0.65536)</a>
 </h1>
 <h4>Unicode's answer to Base64</h4>
 <div class="apidocSectionDiv"><a
@@ -95,29 +95,26 @@
     </h2>
     <ul>
     <li>description and source-code<pre class="apidocCodePre">decode = function (str) {
-		var bufs = [];
+		var bytes = [];
 		var done = false;
-		for(var i = 0; i &#x3c; str.length; i++) {
+		spreadString(str).forEach(function(codePoint) {
 			if(done) {
-				throw new Error(&#x22;Base65536 sequence continued after final byte&#x22;);
+				throw Error(&#x22;Base65536 sequence continued after final byte&#x22;);
 			}
-			var codePoint = str.codePointAt(i);
-			var b1 = codePoint &#x26; ((1 &#x3c;&#x3c; 8) - 1);
-			var b2 = get_b2[codePoint - b1];
-			if(b2 === undefined) {
-				throw new Error(&#x22;Not a valid Base65536 code point: &#x22; + String(codePoint));
-			}
-			if(b2 === NO_BYTE) {
-				bufs.push(new Buffer([b1]));
+			var b1 = codePoint &#x26; ((possibleBytes) - 1);
+			var blockStart = codePoint - b1;
+			if(blockStart === paddingBlockStart) {
+				bytes.push(b1);
 				done = true;
 			} else {
-				bufs.push(new Buffer([b1, b2]));
+				var b2 = b2s[blockStart];
+				if(b2 === undefined) {
+					throw Error(&#x22;Not a valid Base65536 code point: &#x22; + String(codePoint));
+				}
+				bytes.push(b1, b2);
 			}
-			if(codePoint &#x3e;= (1 &#x3c;&#x3c; 16)) {
-				i++;
-			}
-		}
-		return Buffer.concat(bufs);
+		});
+		return Buffer.from(bytes)
 	}</pre></li>
     <li>example usage<pre class="apidocCodePre">...
 var base65536 = require(&#x22;base65536&#x22;);
@@ -147,15 +144,24 @@ console.log(buf.equals(buf2)); // true
     </h2>
     <ul>
     <li>description and source-code<pre class="apidocCodePre">encode = function (buf) {
-		var strs = [];
+		var codePoints = [];
 		for(var i = 0; i &#x3c; buf.length; i += 2) {
 			var b1 = buf[i];
-			var b2 = i + 1 &#x3c; buf.length ? buf[i + 1] : NO_BYTE;
-			var codePoint = get_block_start[b2] + b1;
-			var str = String.fromCodePoint(codePoint);
-			strs.push(str);
+			var blockStart = i + 1 &#x3c; buf.length ? blockStarts[buf[i + 1]] : paddingBlockStart;
+			var codePoint = blockStart + b1;
+			codePoints.push(codePoint);
 		}
-		return strs.join(&#x22;&#x22;);
+		return codePoints.map(function(codePoint) {
+			if(codePoint &#x3c; bmpThreshold) {
+				var first = codePoint;
+				return String.fromCharCode(first);
+			}
+
+			// UTF-16 encode
+			var first = high + ((codePoint - bmpThreshold) / offset);
+			var second = low + (codePoint % offset);
+			return String.fromCharCode(first) + String.fromCharCode(second);
+		}).join(&#x22;&#x22;);
 	}</pre></li>
     <li>example usage<pre class="apidocCodePre">...
 ## Usage
